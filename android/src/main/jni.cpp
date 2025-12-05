@@ -258,7 +258,7 @@ JNIEXPORT jlong JNICALL
 Java_com_rnwhisper_WhisperContext_initContext(
         JNIEnv *env, jobject thiz, jint context_id, jstring model_path_str) {
     UNUSED(thiz);
-    struct whisper_context_params cparams;
+    struct whisper_context_params cparams = whisper_context_default_params();
 
     // TODO: Expose dtw_token_timestamps and dtw_aheads_preset
     cparams.dtw_token_timestamps = false;
@@ -281,7 +281,7 @@ Java_com_rnwhisper_WhisperContext_initContextWithAsset(
     jstring model_path_str
 ) {
     UNUSED(thiz);
-    struct whisper_context_params cparams;
+    struct whisper_context_params cparams = whisper_context_default_params();
 
     // TODO: Expose dtw_token_timestamps and dtw_aheads_preset
     cparams.dtw_token_timestamps = false;
@@ -303,7 +303,7 @@ Java_com_rnwhisper_WhisperContext_initContextWithInputStream(
     jobject input_stream
 ) {
     UNUSED(thiz);
-    struct whisper_context_params cparams;
+    struct whisper_context_params cparams = whisper_context_default_params();
 
     // TODO: Expose dtw_token_timestamps and dtw_aheads_preset
     cparams.dtw_token_timestamps = false;
@@ -891,6 +891,12 @@ Java_com_rnwhisper_WhisperContext_unsetLog(JNIEnv *env, jobject thiz) {
     UNUSED(env);
     UNUSED(thiz);
     whisper_log_set(rnwhisper_log_callback_default, NULL);
+}
+
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved) {
+    UNUSED(reserved);
+    whisper_log_set(rnwhisper_log_callback_default, nullptr);
+    return JNI_VERSION_1_6;
 }
 
 } // extern "C"

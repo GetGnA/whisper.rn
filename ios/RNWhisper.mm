@@ -596,6 +596,9 @@ RCT_EXPORT_METHOD(installJSIBindings:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
     RCTBridge *bridge = [RCTBridge currentBridge];
+    if (!bridge) {
+        bridge = self.bridge;
+    }
     if (bridge == nil) {
         reject(@"whisper_jsi_error", @"Bridge not available", nil);
         return;
@@ -603,8 +606,8 @@ RCT_EXPORT_METHOD(installJSIBindings:(RCTPromiseResolveBlock)resolve
 
     RCTCxxBridge *cxxBridge = (RCTCxxBridge *)bridge;
     auto callInvoker = bridge.jsCallInvoker;
-    if (cxxBridge.runtime) {
-        facebook::jsi::Runtime *runtime = static_cast<facebook::jsi::Runtime *>(cxxBridge.runtime);
+    if ([cxxBridge respondsToSelector:@selector(runtime)]) {
+        facebook::jsi::Runtime *runtime = reinterpret_cast<facebook::jsi::Runtime *>(cxxBridge.runtime);
 
         if (callInvoker) {
           callInvoker->invokeAsync([runtime, callInvoker]() {

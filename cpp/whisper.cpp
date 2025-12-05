@@ -1493,7 +1493,7 @@ static bool whisper_model_load(struct whisper_model_loader * loader, whisper_con
         uint32_t magic;
         read_safe(loader, magic);
         if (magic != WSP_GGML_FILE_MAGIC) {
-            WHISPER_LOG_ERROR("%s: invalid model data (bad magic)\n", __func__);
+            WHISPER_LOG_ERROR("%s: invalid model data (bad magic: %08x, expected %08x)\n", __func__, magic, WSP_GGML_FILE_MAGIC);
             return false;
         }
     }
@@ -4766,7 +4766,7 @@ struct whisper_vad_context * whisper_vad_init_with_params(
         uint32_t magic;
         read_safe(loader, magic);
         if (magic != WSP_GGML_FILE_MAGIC) {
-            WHISPER_LOG_ERROR("%s: invalid model data (bad magic)\n", __func__);
+            WHISPER_LOG_ERROR("%s: invalid model data (bad magic: %08x, expected %08x)\n", __func__, magic, WSP_GGML_FILE_MAGIC);
             return nullptr;
         }
     }

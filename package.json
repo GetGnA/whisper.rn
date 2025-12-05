@@ -8,11 +8,23 @@
   "react-native": "src/index",
   "source": "src/index",
   "exports": {
+    ".": {
+      "import": "./lib/module/index.js",
+      "require": "./lib/commonjs/index.js",
+      "types": "./lib/typescript/index.d.ts",
+      "react-native": "./src/index.ts"
+    },
+    "./realtime-transcription": {
+      "import": "./lib/module/realtime-transcription/index.js",
+      "require": "./lib/commonjs/realtime-transcription/index.js",
+      "types": "./lib/typescript/realtime-transcription/index.d.ts",
+      "react-native": "./src/realtime-transcription/index.ts"
+    },
     "./*": {
       "import": "./lib/module/*",
       "require": "./lib/commonjs/*",
       "types": "./lib/typescript/*",
-      "react-native": "src/*"
+      "react-native": "./src/*"
     }
   },
   "files": [
@@ -39,7 +51,7 @@
     "bootstrap": "./scripts/bootstrap.sh",
     "docgen": "typedoc src/index.ts src/realtime-transcription/index.ts --plugin typedoc-plugin-markdown --excludePrivate --readme none --out docs/API",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.build.json",
     "build": "bob build",
     "prepack": "yarn docgen && ./scripts/build-ios.sh && yarn build",
     "test": "jest",
