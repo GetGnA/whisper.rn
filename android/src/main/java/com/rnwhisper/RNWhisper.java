@@ -175,7 +175,23 @@ public class RNWhisper implements LifecycleEventListener {
             context = WhisperContext.initContext(id, modelFilePath);
           }
           if (context == 0) {
-            throw new Exception("Failed to initialize context");
+            String errorMessage = "Failed to initialize context";
+            if (resId > 0) {
+              errorMessage += " from resource ID: " + resId;
+            } else if (isBundleAsset) {
+              errorMessage += " from asset: " + modelFilePath;
+            } else {
+              errorMessage += " from file: " + modelFilePath;
+              File file = new File(modelFilePath);
+              if (!file.exists()) {
+                errorMessage += " (File does not exist)";
+              } else if (!file.canRead()) {
+                errorMessage += " (File is not readable)";
+              } else {
+                errorMessage += " (File size: " + file.length() + " bytes)";
+              }
+            }
+            throw new Exception(errorMessage);
           }
           WhisperContext whisperContext = new WhisperContext(id, reactContext, context);
           contexts.put(id, whisperContext);

@@ -287,7 +287,12 @@ export class WhisperContext {
   } {
     const jobId: number = Math.floor(Math.random() * 10000)
 
-    const { onProgress, onNewSegments, ...rest } = options
+    const { onProgress, onNewSegments, language, ...rest } = options
+
+    // Normalize language code (e.g. "en-US" -> "en")
+    const normalizedLanguage = language?.includes('-')
+      ? language.split('-')[0]
+      : language
 
     let progressListener: any
     let lastProgress: number = 0
@@ -335,6 +340,7 @@ export class WhisperContext {
       },
       promise: RNWhisper[method](this.id, jobId, data, {
         ...rest,
+        language: normalizedLanguage,
         onProgress: !!onProgress,
         onNewSegments: !!onNewSegments,
       })
@@ -417,13 +423,19 @@ export class WhisperContext {
     stop: () => Promise<void>
     promise: Promise<TranscribeResult>
   } {
-    const { onProgress, onNewSegments, ...rest } = options
+    const { onProgress, onNewSegments, language, ...rest } = options
+
+    // Normalize language code (e.g. "en-US" -> "en")
+    const normalizedLanguage = language?.includes('-')
+      ? language.split('-')[0]
+      : language
 
     // Generate a unique jobId for this transcription
     const jobId = Math.floor(Math.random() * 10000)
 
     const jsiOptions = {
       ...rest,
+      language: normalizedLanguage,
       onProgress: onProgress || undefined,
       onNewSegments: onNewSegments || undefined,
       jobId, // Pass jobId to native implementation
@@ -544,7 +556,12 @@ export class WhisperContext {
 
     const jobId: number = Math.floor(Math.random() * 10000)
     try {
-      await RNWhisper.startRealtimeTranscribe(this.id, jobId, options)
+      await RNWhisper.startRealtimeTranscribe(this.id, jobId, {
+        ...options,
+        language: options.language?.includes('-')
+          ? options.language.split('-')[0]
+          : options.language,
+      })
     } catch (e) {
       if (prevAudioSession) await updateAudioSession(prevAudioSession)
       throw e
